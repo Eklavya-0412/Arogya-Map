@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Playground | FHDR Terminology Service</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <a href="/" class="logo">FHDR <span>Terminology</span></a>
+    <nav class="nav-links">
+      <a href="/">Search UI</a>
+      <a href="/api-playground.html" class="active">API Playground</a>
+    </nav>
+  </header>
+
+  <main style="max-width: 900px;">
+    <!-- Documentation Section -->
+    <div class="api-endpoint-card">
+        <div class="card-header"><h3>Compliance with India's 2016 EHR Standards</h3></div>
+        <div class="card-body">
+            <p>This prototype demonstrates key principles required for compliance with the Ayushman Bharat Digital Mission (ABDM) and India's EHR Standards.</p>
+            
+            <h4 style="margin-top: 1.5rem;">OAuth 2.0–Secured Access using ABHA Tokens</h4>
+            <p>OAuth 2.0 is the standard security protocol for granting access to APIs. In ABDM, every patient has an ABHA (Ayushman Bharat Health Account).</p>
+            <ul>
+                <li>When an EMR system wants to access patient data, it must authenticate using ABHA-linked credentials to obtain a secure OAuth 2.0 token.</li>
+                <li>This token must be used in API requests (e.g., <code>Authorization: Bearer &lt;token&gt;</code>).</li>
+                <li><strong>In this App:</strong> The <code>/api/fhir/Bundle</code> endpoint simulates this by requiring a Bearer token. While any token is accepted in this prototype, a real system would validate it against the ABDM gateway.</li>
+            </ul>
+
+            <h4 style="margin-top: 1.5rem;">Audit-Ready Metadata</h4>
+            <p>Every access to patient data must be traceable. “Audit-ready” means the system automatically records metadata for every transaction.</p>
+            <ul>
+                <li><strong>Who:</strong> The identity of the doctor, hospital, or system accessing the data.</li>
+                <li><strong>When:</strong> The exact timestamp of the access.</li>
+                <li><strong>What:</strong> The specific data that was accessed (e.g., patient problem list).</li>
+                <li><strong>Why:</strong> The purpose of the access (e.g., treatment, insurance claim).</li>
+                <li><strong>Consent:</strong> A reference to the patient's consent artifact that allowed the action.</li>
+            </ul>
+            <p><strong>In this App:</strong> When you upload a bundle, check the server console and the <code>data/audit-log.json</code> file. You will see a detailed log entry created for the transaction, simulating a real audit trail.</p>
+        </div>
+    </div>
+
+    <!-- Endpoint 1: Search -->
+    <div class="api-endpoint-card">
+      <div class="card-header"><h3><span class="method">GET</span> /api/terminology/search</h3></div>
+      <div class="card-body">
+        <p>Search for terms by name or code. Supports pagination.</p>
+        <div class="param-group">
+          <label for="searchQuery">Query (q)</label>
+          <input type="text" id="searchQuery" placeholder="e.g., jwara or A-1">
+        </div>
+        <div class="param-group">
+          <label for="searchPage">Page</label>
+          <input type="text" id="searchPage" value="1">
+        </div>
+        <button id="searchBtn" class="btn btn-primary">Send Request</button>
+        <div class="output-section" style="margin-top: 1.5rem;">
+          <h4 style="font-weight: 600;">cURL Command</h4>
+          <pre id="searchCurl" style="margin-top: 0.5rem;"><code></code></pre>
+          <h4 style="font-weight: 600; margin-top: 1rem;">Response</h4>
+          <pre id="searchResponse" style="margin-top: 0.5rem;"><code></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Endpoint 2: Translate -->
+    <div class="api-endpoint-card">
+      <div class="card-header"><h3><span class="method">GET</span> /api/terminology/ConceptMap/$translate</h3></div>
+      <div class="card-body">
+        <p>Translate a specific NAMASTE code to its ICD-11 equivalents.</p>
+        <div class="param-group">
+          <label for="translateSystem">System</label>
+          <input type="text" id="translateSystem" value="http://namaste.gov.in/CodeSystem/namaste-terms/siddha">
+        </div>
+        <div class="param-group">
+          <label for="translateCode">Code</label>
+          <input type="text" id="translateCode" value="A">
+        </div>
+        <button id="translateBtn" class="btn btn-primary">Send Request</button>
+        <div class="output-section" style="margin-top: 1.5rem;">
+          <h4 style="font-weight: 600;">cURL Command</h4>
+          <pre id="translateCurl" style="margin-top: 0.5rem;"><code></code></pre>
+          <h4 style="font-weight: 600; margin-top: 1rem;">Response</h4>
+          <pre id="translateResponse" style="margin-top: 0.5rem;"><code></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Endpoint 3: Bundle Upload -->
+    <div class="api-endpoint-card">
+      <div class="card-header"><h3><span class="method">POST</span> /api/fhir/Bundle</h3></div>
+      <div class="card-body">
+        <p>Upload a FHIR transaction Bundle. Requires a mock Bearer token for authorization.</p>
+        <div class="param-group">
+          <label for="bundleToken">Authorization Token</label>
+          <input type="text" id="bundleToken" value="Bearer mock-abha-token-12345">
+        </div>
+        <div class="param-group">
+          <label for="bundleBody">Request Body (FHIR Bundle)</label>
+          <textarea id="bundleBody"></textarea>
+        </div>
+        <button id="bundleBtn" class="btn btn-primary">Send Request</button>
+        <div class="output-section" style="margin-top: 1.5rem;">
+          <h4 style="font-weight: 600;">cURL Command</h4>
+          <pre id="bundleCurl" style="margin-top: 0.5rem;"><code></code></pre>
+          <h4 style="font-weight: 600; margin-top: 1rem;">Response</h4>
+          <pre id="bundleResponse" style="margin-top: 0.5rem;"><code></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Endpoint 4: FHIR Resources -->
+    <div class="api-endpoint-card">
+        <div class="card-header"><h3><span class="method">GET</span> FHIR Terminology Resources</h3></div>
+        <div class="card-body">
+          <p>Directly access the generated FHIR resources.</p>
+          <ul>
+            <li><a href="/api/terminology/CodeSystem" target="_blank">/api/terminology/CodeSystem</a></li>
+            <li><a href="/api/terminology/ConceptMap" target="_blank">/api/terminology/ConceptMap</a></li>
+          </ul>
+        </div>
+      </div>
+  </main>
+
+  <script src="js/api-playground.js" defer></script>
+</body>
+</html>
